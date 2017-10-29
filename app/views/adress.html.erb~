@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+
+<p>
+<%render "adress",locals:{url:localhost:3000/posts/+@note.id}
+</p>
+
+</body>
+</html>
