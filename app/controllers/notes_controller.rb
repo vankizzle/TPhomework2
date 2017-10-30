@@ -29,7 +29,8 @@ class NotesController < ApplicationController
     respond_to do |format|
       if @note.save
         format.html { redirect_to notes_url + "/" + @note.id.to_s + "/info" }
-        format.json { render :show, status: :created, location: @note }
+        format.json { render :json => url:notes_url + "/" + params[:id] => @note.to_json}
+	format.xml {render :xml => url:notes_url + "/" + params[:id] => @note.to_xml}
       else
         format.html { render :new }
         format.json { render json: @note.errors, status: :unprocessable_entity }
