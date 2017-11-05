@@ -88,4 +88,10 @@ end
     def note_params
       params.require(:note).permit(:content)
     end
+  
+    def note_params_api 
+      params.permit(:content, :message, :email, :password) 
+    end 
+ 
+
 end
