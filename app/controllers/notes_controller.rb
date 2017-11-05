@@ -31,17 +31,17 @@ class NotesController < ApplicationController
              render xml: 
              '<?xml version = "1.0" encoding = "UTF-8" standalone ="yes"?>' + 
              '<url>' + 
-                 notes_url + note.id.to_s +  
+                 notes_url + "/" + note.id.to_s +  
              '</url>'; 
          elsif request.content_type =~ /json/ 
              note = Note.create(note_params_api) 
-             render json: {url: notes_url + note.id.to_s } 
+             render json: {url: notes_url +  "/" + note.id.to_s } 
          elsif request.content_type =~ /form/ 
              @note = Note.new(note_params) 
 
              @note.author = current_user 
              if @note.save 
-                 redirect_to notes_url + @note.id.to_s + '/info' 
+                 redirect_to notes_url + "/" + @note.id.to_s + '/info' 
              else 
                  @errors = @note.errors 
                  render 'new' 
