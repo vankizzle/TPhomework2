@@ -1,4 +1,5 @@
 class NotesController < ApplicationController
+  protect_from_forgery with: :null_session
   before_action :set_note, only: [:show, :edit, :update, :destroy]
 
   # GET /notes
@@ -24,18 +25,29 @@ class NotesController < ApplicationController
   # POST /notes
   # POST /notes.json
   def create
-    @note = Note.new(note_params)
+    if request.content_type =~ /xml/ 
+           params[:message] = Hash.from_xml(request.body.read)["message"] 
+             note = Note.create(note_params_api) 
+             render xml: 
+             '<?xml version = "1.0" encoding = "UTF-8" standalone ="yes"?>' + 
+             '<url>' + 
+                 notes_url + note.id +  
+             '</url>'; 
+         elsif request.content_type =~ /json/ 
+             note = Note.create(note_params_api) 
+             render json: {url: notes_url + note.id } 
+         elsif request.content_type =~ /form/ 
+             @note = Note.new(note_params) 
 
-    respond_to do |format|
-      if @note.save
-        format.html { redirect_to notes_url + "/" + @note.id.to_s + "/info" }
-        format.json { render :json => url:notes_url + "/" + params[:id] => @note.to_json}
-	format.xml {render :xml => url:notes_url + "/" + params[:id] => @note.to_xml}
-      else
-        format.html { render :new }
-        format.json { render json: @note.errors, status: :unprocessable_entity }
-      end
-    end
+             @note.author = current_user 
+             if @note.save 
+                 redirect_to notes_url + @note.id + '/info' 
+             else 
+                 @errors = @note.errors 
+                 render 'new' 
+             end 
+         end 
+
   end
 
 def info
